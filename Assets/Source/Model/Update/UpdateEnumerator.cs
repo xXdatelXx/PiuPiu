@@ -17,6 +17,6 @@ public class UpdateEnumerator : MonoBehaviour
 
     private void Update()
     {
-        _updates.ForEach(i => i.Update());
+        _updates.ForEach(i => i.Update(Time.deltaTime));
     }
 }

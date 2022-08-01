@@ -6,25 +6,23 @@ public class VerticalRotateView : MonoBehaviour
     [SerializeField, Range(-90, 0)] private float _minX;
     [SerializeField, Range(90, 0)] private float _maxX;
     private PlayerRotateView _decorated;
+    private Vector2 _clampRotation;
 
     private void Awake()
     {
         _decorated = GetComponent<PlayerRotateView>();
+        _clampRotation = new Vector2(0, transform.localEulerAngles.y);
     }
 
-    public void Rotate(Vector2 rotathion)
+    public void Rotate(Vector2 rotation)
     {
-        _decorated.Rotate(rotathion);
-
+        _decorated.Rotate(rotation);
         Clamp();
     }
 
     private void Clamp()
     {
-        float x = transform.localEulerAngles.x;
-        x = x > 180 ? x - 360 : x;
-        x = Mathf.Clamp(x, _minX, _maxX);
-
-        transform.localEulerAngles = new Vector2(x, transform.localEulerAngles.y);
+        _clampRotation.x = transform.ClampXEuler(_minX, _maxX);
+        transform.localEulerAngles = _clampRotation;
     }
 }

@@ -1,7 +1,13 @@
-public class RootInput
+public class RootInput : IUpdateble
 {
-    private AndroidInput _android = new();
-    private ComputerInput _computer = new();
+    private readonly AndroidInput _android;
+    private readonly ComputerInput _computer;
+
+    public RootInput(InputKeys keys)
+    {
+        _android = new();
+        _computer = new(keys);
+    }
 
     public IInput GetInput()
     {
@@ -9,6 +15,13 @@ public class RootInput
         return _computer;
 #elif !UNITY_EDITOR && UNITY_ANDROID
         return _android;
+#endif
+    }
+
+    public void Update(float deltaTime)
+    {
+#if UNITY_EDITOR
+        _computer.Update();
 #endif
     }
 }

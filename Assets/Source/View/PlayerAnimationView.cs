@@ -8,7 +8,7 @@ public class PlayerAnimationView : MonoBehaviour
 
     }
 
-    public void Seat()
+    public void SeatDown()
     {
 
     }

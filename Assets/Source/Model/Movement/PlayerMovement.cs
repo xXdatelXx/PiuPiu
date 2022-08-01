@@ -1,38 +1,51 @@
 using UnityEngine;
 using System;
 
-public class PlayerMovement : IUpdateble
+[RequireComponent(typeof(CharacterController))]
+public class PlayerMovement : MonoBehaviour
 {
-    private readonly CharacterController _controller;
-    private readonly float _speed;
-    private readonly float _gravity;
+    private CharacterController _controller;
+    private Speed _speed;
+    private Vector2 _gravity;
 
-    public PlayerMovement(CharacterController controller, float speed, float gravity)
+    public void Init(Speed speed)
     {
-        if (controller == null)
-            throw new NullReferenceException(controller.ToString());
-        if (speed < 0)
-            throw new ArgumentOutOfRangeException(speed.ToString());
-        if (speed < 0)
-            throw new ArgumentOutOfRangeException(gravity.ToString());
-
-        _controller = controller;
-        _speed = speed;
-        _gravity = gravity;
+        // ускорение свободного падения на Земле == 9.81
+        Init(speed, 9.81f);
     }
 
-    public void Move(Vector2 direction)
+    public void Init(Speed speed, float gravity)
     {
-        _controller.Move(direction * _speed * Time.deltaTime);
+        if (gravity < 0)
+            throw new ArgumentOutOfRangeException("gravity must be > 0");
+
+        _controller = GetComponent<CharacterController>();
+        _speed = speed.Construct();
+        _gravity = new Vector2(0, -gravity);
     }
 
-    public void Update()
+    public void Move(Vector3 direction)
+    {
+        _controller.Move(direction * _speed.Value * Time.deltaTime);
+    }
+
+    public void SeatDown()
+    {
+        _speed.SeatDown();
+    }
+
+    public void GetUp()
+    {
+        _speed.GetUp();
+    }
+
+    private void Update()
     {
         Gravitate();
     }
 
     private void Gravitate()
     {
-        _controller.Move(new Vector2(0, -_gravity));
+        _controller.Move(_gravity * Time.deltaTime);
     }
 }

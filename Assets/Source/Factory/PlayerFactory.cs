@@ -6,13 +6,11 @@ public class PlayerFactory : MonoBehaviour
     [SerializeField] private Player _player;
     [SerializeField] private Transform _spawnPoint;
     [SerializeField] private PlayerStat _stat;
-    private UpdateEnumerator _updateEnumerator;
     private IInput _input;
 
     [Inject]
-    private void Construct(UpdateEnumerator updateEnumerator, IInput input)
+    public void Construct(IInput input)
     {
-        _updateEnumerator = updateEnumerator;
         _input = input;
     }
 
@@ -24,10 +22,9 @@ public class PlayerFactory : MonoBehaviour
     private void Create()
     {
         var player = Instantiate(_player, _spawnPoint.position, _spawnPoint.rotation);
-        var movement =
-            new PlayerMovement(player.GetComponent<CharacterController>(), _stat.Speed, _stat.Gravity);
 
-        _updateEnumerator.Add(movement);
-        player.Init(movement, _input);
+        player.Movement.Init(_stat.Speed, _stat.Gravity);
+        player.Armor.Init(new Health(_stat.Health));
+        player.Init(_input);
     }
 }
